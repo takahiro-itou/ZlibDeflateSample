@@ -40,4 +40,11 @@
 | 11000000  ～ 11000111  |  8 bit | c + 88   | 192 ～ 199 | 280 ～ 287 |
 | 110010000 ～ 111111111 |  9 bit | c - 256  | 400 ～ 511 | 144 ～ 255 |
 
+##  参考文献
+
+- https://qiita.com/ajinadai/items/9c02dc750bc017c93c8f
+- https://zenn.dev/gorogoroumaru/articles/495cc9a97513b0
+- https://qiita.com/taka7n/items/357d776644cfa10b6b2e
+- https://darkcrowcorvus.hatenablog.jp/entry/2017/01/09/014407
+
 

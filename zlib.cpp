@@ -169,8 +169,12 @@ readHuffman(
     int bit = 0;
     int max = -1;
     int cod = 0;
-    while ( max == -1 || bit < max ) {
-        cod = (cod << 1) | readBits(st, 1);
+    char    dbg[32] = { 0 };
+
+    while ( max == -1 || bit <= max ) {
+        int n = readBits(st, 1);
+        dbg[bit] = '0' + n;
+        cod = (cod << 1) | n;
         ++ bit;
         for ( int i = 0; i < num; ++ i ) {
             int len = huff[i].len;
@@ -182,7 +186,9 @@ readHuffman(
             }
         }
     }
-    fprintf(stderr, "Invalid Code at %lx\n", st.pos);
+    fprintf(stderr, "Invalid Code at %lx code = %s\n",
+            st.pos, dbg
+    );
     exit( 3 );
 }
 
@@ -315,6 +321,28 @@ void inflate(
         33,     49,   65,   97,  129,  193,  257,   385,   513,   769,
         1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577,
     };
+
+    int pos = 0;
+    while ( pos < osz ) {
+        //  ハフマン符号を読み出す。
+        fprintf(stderr, "# DBG : pos = %08lx, %d : ", st.pos, st.bit);
+        int code = readHuffman(lit_huf, 285, st);
+        fprintf(stderr, "%x\n", code);
+
+        if ( code == 256 ) {
+            break;      //  終端
+        }
+        if ( code >= 286 ) {
+            fprintf(stderr, "Invalid Code : %d\n", code);
+            exit( 4 );
+        }
+        if ( code < 256 ) {
+            //  そのまま
+            wrt[pos++]  = code;
+            continue;
+        }
+
+    }
 
     return;
 }

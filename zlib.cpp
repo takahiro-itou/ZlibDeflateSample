@@ -10,13 +10,53 @@ exit 0
 #include    <stdint.h>
 #include    <vector>
 
+struct  status
+{
+    const   uint8_t * buf;
+    size_t      len;
+    size_t      pos;
+    int         bit;
+};
+
 template <typename T>
 T   pointer_cast(void * ptr)
 {
     return ( static_cast<T>(ptr) );
 }
 
-size_t
+template <typename T>
+T   pointer_cast(const void * ptr)
+{
+    return ( static_cast<T>(ptr) );
+}
+
+void
+showPos(const status &st)
+{
+    fprintf(stderr,
+            "# INFO : pos = %ld, bit = %d, len = %ld\n",
+            st.pos, st.bit, st.len);
+    return;
+}
+
+const uint32_t
+readBits(status & st, int bits)
+{
+    uint32_t    val = 0;
+    const uint32_t * ptr = pointer_cast<const uint32_t *>(st.buf + st.pos);
+    val = *(ptr) >> (st.bit);
+    fprintf(stderr, "# DBG: pos=%ld, *ptr=%x, val=%x\n",
+            st.pos, (*ptr), val);
+    st.bit  += bits;
+    while ( st.bit >= 8 ) {
+        st.bit  -= 8;
+        st.pos  ++;
+    }
+    const  uint32_t msk = (1UL << bits) - 1;
+    return ( val & msk );
+}
+
+const   size_t
 checkHeader(uint8_t * &buf)
 {
     const uint32_t * ptr = pointer_cast<const uint32_t *>(buf);
@@ -27,18 +67,25 @@ checkHeader(uint8_t * &buf)
     return ( ptr[2] );  //  展開後のサイズ。
 }
 
-void inflate(const uint8_t * buf, const size_t sz)
+void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
 {
+    status  st = { buf, fsz, 0, 0 };
     std::vector<uint8_t>    wrt;
     wrt.clear();
-    wrt.resize(sz, 0);
+    wrt.resize(osz, 0);
 
     //  ヘッダー    //
-    if ( buf[0] != 0x78 || buf[1] != 0x9C ) {
-        fprintf(stderr, "Unsupported Format.");
+    uint32_t  head  = readBits(st, 16);
+    if ( head != 0x9C78 ) {
+        fprintf(stderr, "Unsupported Format: %04x\n", head);
         exit( 2 );
     }
     fprintf(stderr, "Header OK.\n");
+
+    int  bfinal = readBits(st, 1);
+    int  btype  = readBits(st, 2);
+    fprintf(stderr, "bfinal = %d, btype = %d\n", bfinal, btype);
+    showPos(st);
 
     return;
 }
@@ -75,7 +122,7 @@ int main(int argc, char * argv[])
     size_t  orgSize =checkHeader(ptr);
     fprintf(stderr, "Original Size = %lx\n", orgSize);
 
-    inflate(ptr, orgSize);
+    inflate(ptr, fsz - 0x18, orgSize);
 
     return ( 0 );
 }

@@ -260,7 +260,7 @@ void inflate(
     showHuffman(len_huf, 19);
 
     //  文字・一致長の符号長表を復元
-    int lit_len[285] = { 0 };
+    int lit_len[286] = { 0 };
     for ( int i = 0; i < hlit; ) {
         int code = readHuffman(len_huf, 19, st);
         int len = 0;
@@ -287,13 +287,14 @@ void inflate(
             //  そのまま
             lit_len[i++] = code;
         }
+        fprintf(stderr, "# TBL LEN : code = %d, len = %d\n", code, len);
     }
     showArray(lit_len);
 
     //  文字・一致長の符号
-    huffman lit_huf[285];
-    canonical(lit_len, 285, lit_huf);
-    showHuffman(lit_huf, 285);
+    huffman lit_huf[286];
+    canonical(lit_len, 286, lit_huf);
+    showHuffman(lit_huf, 286);
 
     //  距離の符号長表を復元
     int dist_len[30] = { 0 };
@@ -328,7 +329,7 @@ void inflate(
     showArray(dist_len);
 
     //  距離の符号
-    huffman dst_huf[285];
+    huffman dst_huf[30];
     canonical(dist_len, 30, dst_huf);
     showHuffman(dst_huf, 30);
 
@@ -357,7 +358,7 @@ void inflate(
     while ( pos < osz ) {
         //  ハフマン符号を読み出す。
         fprintf(stderr, "# DBG : pos = %08lx, %d : ", st.pos, st.bit);
-        int val = readHuffman(lit_huf, 285, st, &code, &bits);
+        int val = readHuffman(lit_huf, 286, st, &code, &bits);
         fprintf(stderr, "%d (%02x) ", val, val);
         showBits(code, bits);
         fprintf(stderr, "\n");

@@ -294,6 +294,11 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
     }
     showArray(dist_len);
 
+    //  距離の符号
+    huffman dst_huf[285];
+    canonical(dist_len, 29, dst_huf);
+    showHuffman(dst_huf, 29);
+
     return;
 }
 

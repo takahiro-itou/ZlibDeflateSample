@@ -432,7 +432,15 @@ int main(int argc, char * argv[])
     std::vector<uint8_t>    wrt;
     inflate(ptr, fsz - 0x18, orgSize, wrt);
 
-    fp  = fopen("out.bin", "wb");
+    if ( argc > 2 ) {
+        fp  = fopen("out.bin", "wb");
+    } else {
+        fp  = fopen(argv[2], "wb");
+    }
+    if ( fp != nullptr ) {
+        perror("output file open error");
+        exit( 1 );
+    }
     fwrite(&(wrt[0]), 1, orgSize, fp);
     fclose(fp);
 

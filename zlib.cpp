@@ -56,15 +56,21 @@ showArray(T (& ptr)[N], FILE * fp = stderr)
 }
 
 void
+showBits(const int code, const int len, FILE * fp = stderr)
+{
+    for ( int j = 0; j < len; ++ j ) {
+        int k = len - j - 1;
+        fprintf(fp, "%d", (code >> k) & 1);
+    }
+}
+
+void
 showHuffman(const huffman huff[], const int N, FILE * fp = stderr)
 {
     for ( int i = 0; i < N; ++ i ) {
         if ( huff[i].len == 0 ) { continue; }
         fprintf(fp, "Huff[%d] (%d) : ", i, huff[i].len);
-        for ( int j = 0; j < huff[i].len; ++ j ) {
-            int k = huff[i].len - j - 1;
-            fprintf(fp, "%d", (huff[i].code >> k) & 1);
-        }
+        showBits(huff[i].code, huff[i].len, fp);
         fprintf(fp, "\n");
     }
 }
@@ -144,11 +150,13 @@ canonical(const int len[], const int num, huffman huff[])
             h.code  <<= 1;
         }
         huff[sel] = h;
-        ++ h.code;
-#if 0
-        fprintf(stderr, "# DBG : sel=%d, huff=%d, %x\n",
+#if 1
+        fprintf(stderr, "# DBG : sel=%d, huff=%d, %x, ",
                 sel, h.len, h.code);
+        showBits(h.code, h.len);
+        fprintf(stderr, "\n");
 #endif
+        ++ h.code;
     }
 }
 
@@ -352,7 +360,7 @@ int main(int argc, char * argv[])
     FILE *  fp;
 
     if ( argc > 1 ) {
-        fp  = fopen(argv[0], "rb");
+        fp  = fopen(argv[1], "rb");
     } else {
         fp  = fopen("Test6.z", "rb");
     }

@@ -189,6 +189,8 @@ readHuffman(
         dbg[bit] = '0' + n;
         cod = (cod << 1) | n;
         ++ bit;
+        fprintf(stderr, "# READ HUFF %s, %d, %x\n",
+                dbg, bit, cod);
         for ( int i = 0; i < num; ++ i ) {
             int len = huff[i].len;
             if ( len > max ) { max = len; }

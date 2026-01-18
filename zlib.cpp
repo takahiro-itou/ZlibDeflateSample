@@ -27,6 +27,22 @@ checkHeader(uint8_t * &buf)
     return ( ptr[2] );  //  展開後のサイズ。
 }
 
+void inflate(const uint8_t * buf, const size_t sz)
+{
+    std::vector<uint8_t>    wrt;
+    wrt.clear();
+    wrt.resize(sz, 0);
+
+    //  ヘッダー    //
+    if ( buf[0] != 0x78 || buf[1] != 0x9C ) {
+        fprintf(stderr, "Unsupported Format.");
+        exit( 2 );
+    }
+    fprintf(stderr, "Header OK.\n");
+
+    return;
+}
+
 int main(int argc, char * argv[])
 {
     FILE *  fp;
@@ -58,6 +74,8 @@ int main(int argc, char * argv[])
 
     size_t  orgSize =checkHeader(ptr);
     fprintf(stderr, "Original Size = %lx\n", orgSize);
+
+    inflate(ptr, orgSize);
 
     return ( 0 );
 }

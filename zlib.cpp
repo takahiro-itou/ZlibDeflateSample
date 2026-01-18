@@ -172,7 +172,8 @@ uint32_t
 readHuffman(
         const  huffman huff[],
         const  int  num,
-        status      &st)
+        status      &st,
+        int *       pbits = nullptr)
 {
     int bit = 0;
     int max = -1;
@@ -190,6 +191,9 @@ readHuffman(
             if ( bit != len ) { continue; }
             if ( huff[i].code == cod ) {
                 //  見つかった。
+                if ( pbits != nullptr ) {
+                    *pbits = bit;
+                }
                 return ( i );
             }
         }
@@ -281,7 +285,7 @@ void inflate(
 
     //  距離の符号長表を復元
     int dist_len[29] = { 0 };
-    for ( int i = 0; i < hdist; ++ i ) {
+    for ( int i = 0; i < hdist; ) {
         int code = readHuffman(len_huf, 19, st);
         int len = 0;
         if ( code == 16 ) {
@@ -308,6 +312,7 @@ void inflate(
             dist_len[i++] = code;
         }
     }
+    fprintf(stderr, "dist_len = ");
     showArray(dist_len);
 
     //  距離の符号
@@ -331,11 +336,14 @@ void inflate(
     };
 
     int pos = 0;
+    int bits = 0;
     while ( pos < osz ) {
         //  ハフマン符号を読み出す。
         fprintf(stderr, "# DBG : pos = %08lx, %d : ", st.pos, st.bit);
-        int code = readHuffman(lit_huf, 285, st);
-        fprintf(stderr, "%x\n", code);
+        int code = readHuffman(lit_huf, 285, st, &bits);
+        fprintf(stderr, "%x ", code);
+        showBits(code, bits);
+        fprintf(stderr, "\n");
 
         if ( code == 256 ) {
             break;      //  終端

@@ -47,10 +47,12 @@ showPos(const status &st)
 
 template <typename T, size_t N>
 void
-showArray(T (& ptr)[N], FILE * fp = stderr) {
+showArray(T (& ptr)[N], FILE * fp = stderr)
+{
     for ( size_t i = 0; i < N; ++ i ) {
         fprintf(fp, "%d, ", ptr[i]);
     }
+    fprintf(fp, "\n");
 }
 
 void
@@ -81,7 +83,7 @@ readBits(status & st, int bits)
     }
     const  uint32_t msk = (1UL << bits) - 1;
 
-#if 1
+#if defined( _DEBUG )
     fprintf(stderr, "# DBG: pos=%lx, *ptr=%x, val=%x, ret=%x\n",
             st.pos, (*ptr), val, val & msk);
 #endif
@@ -255,6 +257,37 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
         }
     }
     showArray(lit_len);
+
+    //  距離の符号長表を復元
+    int dist_len[29] = { 0 };
+    for ( int i = 0; i < hdist; ++ i ) {
+        int code = readHuffman(len_huf, 19, st);
+        int len = 0;
+        if ( code == 16 ) {
+            //  直前の数値を繰り返す。  //
+            len = readBits(st, 2) + 3;
+            for ( int j = 0; j < len; ++ j ) {
+                dist_len[i] = dist_len[i - 1];
+                ++ i;
+            }
+        } else if ( code == 17 ) {
+            //  ゼロが 3..10    //
+            len = readBits(st, 3) + 3;
+            for ( int j = 0; j < len; ++ j ) {
+                dist_len[i++]  = 0;
+            }
+        } else if ( code == 18 ) {
+            //  ゼロが 11 .. 138 //
+            len = readBits(st, 7) + 11;
+            for ( int j = 0; j < len; ++ j ) {
+                dist_len[i++]  = 0;
+            }
+        } else {
+            //  そのまま
+            dist_len[i++] = code;
+        }
+    }
+    showArray(dist_len);
 
     return;
 }

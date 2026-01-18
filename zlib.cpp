@@ -18,6 +18,12 @@ struct  status
     int         bit;
 };
 
+struct huffman
+{
+    int len;
+    int code;
+};
+
 template <typename T>
 T   pointer_cast(void * ptr)
 {
@@ -37,6 +43,14 @@ showPos(const status &st)
             "# INFO : pos = %ld, bit = %d, len = %ld\n",
             st.pos, st.bit, st.len);
     return;
+}
+
+template <typename T, size_t N>
+void
+showArray(T (& ptr)[N]) {
+    for ( size_t i = 0; i < N; ++ i ) {
+        fprintf(stderr, "%d, ", ptr[i]);
+    }
 }
 
 const uint32_t
@@ -67,6 +81,60 @@ checkHeader(uint8_t * &buf)
     return ( ptr[2] );  //  展開後のサイズ。
 }
 
+void
+canonical(const int len[], const int num, huffman huff[])
+{
+    std::vector<int>    work(num);
+    std::vector<int>    copy(num);
+
+
+    huffman h = { 0, 0 };
+    for ( int i = 0; i < num; ++ i ) {
+        huff[i] = h;
+        copy[i] = len[i];
+    }
+
+    for ( int i = 0; i < num; ++ i ) {
+        int sel = -1;
+        int min = 9999;
+        for ( int j = 0; j < num; ++ j ) {
+            if ( copy[j] == 0 ) { continue; }
+            if ( copy[j] < min ) {
+                sel = j;
+                min = copy[j];
+            }
+        }
+        if ( sel == -1 ) {
+            break;
+        }
+        work[i] = sel;
+        copy[sel] = 0;
+    }
+
+    for ( int i = 0; i < num; ++ i ) {
+        int sel = work[i];
+        if ( sel == -1 ) {
+            //  残りは符号長が 0 、つまり出現しない
+            break;
+        }
+        int trglen = len[sel];
+        while ( h.len < trglen ) {
+            ++ h.len;
+            h.code  <<= 1;
+        }
+        huff[sel] = h;
+        ++ h.code;
+    }
+}
+
+void
+convertHuffman(
+        const int huff[],
+        const int num,
+        int trees[])
+{
+}
+
 void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
 {
     status  st = { buf, fsz, 0, 0 };
@@ -92,6 +160,17 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
     const int hclen = readBits(st, 4) +   4;
     fprintf(stderr, "hlit = %d, hdist = %d, hclen = %d\n",
             hlit, hdist, hclen);
+
+    //  符号長の符号長
+    const int len_pos[19] = {
+        16, 17, 18, 0,  8, 7,  9, 6, 10, 5,
+        11,  4, 12, 3, 13, 2, 14, 1, 15
+    };
+    int lenlen[19] = { 0 };
+    for ( int i = 0; i < hclen; ++ i ) {
+        lenlen[len_pos[i]] = readBits(st, 3);
+    }
+    showArray(lenlen);
 
     return;
 }

@@ -47,9 +47,9 @@ showPos(const status &st)
 
 template <typename T, size_t N>
 void
-showArray(T (& ptr)[N]) {
+showArray(T (& ptr)[N], FILE * fp = stderr) {
     for ( size_t i = 0; i < N; ++ i ) {
-        fprintf(stderr, "%d, ", ptr[i]);
+        fprintf(fp, "%d, ", ptr[i]);
     }
 }
 
@@ -74,14 +74,18 @@ readBits(status & st, int bits)
     uint32_t    val = 0;
     const uint32_t * ptr = pointer_cast<const uint32_t *>(st.buf + st.pos);
     val = *(ptr) >> (st.bit);
-    fprintf(stderr, "# DBG: pos=%ld, *ptr=%x, val=%x\n",
-            st.pos, (*ptr), val);
     st.bit  += bits;
     while ( st.bit >= 8 ) {
         st.bit  -= 8;
         st.pos  ++;
     }
     const  uint32_t msk = (1UL << bits) - 1;
+
+#if 1
+    fprintf(stderr, "# DBG: pos=%lx, *ptr=%x, val=%x, ret=%x\n",
+            st.pos, (*ptr), val, val & msk);
+#endif
+
     return ( val & msk );
 }
 
@@ -139,8 +143,10 @@ canonical(const int len[], const int num, huffman huff[])
         }
         huff[sel] = h;
         ++ h.code;
+#if 0
         fprintf(stderr, "# DBG : sel=%d, huff=%d, %x\n",
                 sel, h.len, h.code);
+#endif
     }
 }
 
@@ -170,7 +176,7 @@ readHuffman(
             if ( bit != len ) { continue; }
             if ( huff[i].code == cod ) {
                 //  見つかった。
-                return ( cod );
+                return ( i );
             }
         }
     }
@@ -218,6 +224,37 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
     huffman len_huf[19];
     canonical(lenlen, 19, len_huf);
     showHuffman(len_huf, 19);
+
+    //  文字・一致長の符号長表を復元
+    int lit_len[285] = { 0 };
+    for ( int i = 0; i < hlit; ) {
+        int code = readHuffman(len_huf, 19, st);
+        int len = 0;
+        if ( code == 16 ) {
+            //  直前の数値を繰り返す。  //
+            len = readBits(st, 2) + 3;
+            for ( int j = 0; j < len; ++ j ) {
+                lit_len[i] = lit_len[i - 1];
+                ++ i;
+            }
+        } else if ( code == 17 ) {
+            //  ゼロが 3..10    //
+            len = readBits(st, 3) + 3;
+            for ( int j = 0; j < len; ++ j ) {
+                lit_len[i++]  = 0;
+            }
+        } else if ( code == 18 ) {
+            //  ゼロが 11 .. 138 //
+            len = readBits(st, 7) + 11;
+            for ( int j = 0; j < len; ++ j ) {
+                lit_len[i++]  = 0;
+            }
+        } else {
+            //  そのまま
+            lit_len[i++] = code;
+        }
+    }
+    showArray(lit_len);
 
     return;
 }

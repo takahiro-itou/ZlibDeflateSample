@@ -85,7 +85,13 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
     int  bfinal = readBits(st, 1);
     int  btype  = readBits(st, 2);
     fprintf(stderr, "bfinal = %d, btype = %d\n", bfinal, btype);
-    showPos(st);
+
+    //  データの個数
+    const int hlit  = readBits(st, 5) + 257;
+    const int hdist = readBits(st, 5) +   1;
+    const int hclen = readBits(st, 4) +   4;
+    fprintf(stderr, "hlit = %d, hdist = %d, hclen = %d\n",
+            hlit, hdist, hclen);
 
     return;
 }

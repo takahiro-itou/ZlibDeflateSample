@@ -186,10 +186,12 @@ readHuffman(
     exit( 3 );
 }
 
-void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
+void inflate(
+        const uint8_t * buf, const size_t fsz,
+        const size_t osz,
+        std::vector<uint8_t> &wrt)
 {
     status  st = { buf, fsz, 0, 0 };
-    std::vector<uint8_t>    wrt;
     wrt.clear();
     wrt.resize(osz, 0);
 
@@ -299,6 +301,8 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
     canonical(dist_len, 29, dst_huf);
     showHuffman(dst_huf, 29);
 
+    //  データ本体を復元
+
     return;
 }
 
@@ -334,7 +338,8 @@ int main(int argc, char * argv[])
     size_t  orgSize =checkHeader(ptr);
     fprintf(stderr, "Original Size = %lx\n", orgSize);
 
-    inflate(ptr, fsz - 0x18, orgSize);
+    std::vector<uint8_t>    wrt;
+    inflate(ptr, fsz - 0x18, orgSize, wrt);
 
     return ( 0 );
 }

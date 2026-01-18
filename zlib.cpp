@@ -437,7 +437,7 @@ int main(int argc, char * argv[])
     } else {
         fp  = fopen("out.bin", "wb");
     }
-    if ( fp != nullptr ) {
+    if ( fp == nullptr ) {
         perror("output file open error");
         exit( 1 );
     }

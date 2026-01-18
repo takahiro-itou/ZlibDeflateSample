@@ -79,6 +79,10 @@ showHuffman(const huffman huff[], const int N, FILE * fp = stderr)
 const uint32_t
 readBits(status & st, int bits)
 {
+    if ( bits == 0 ) {
+        return ( 0 );
+    }
+
     uint32_t    val = 0;
     const uint32_t * ptr = pointer_cast<const uint32_t *>(st.buf + st.pos);
     val = *(ptr) >> (st.bit);
@@ -284,7 +288,7 @@ void inflate(
     showHuffman(lit_huf, 285);
 
     //  距離の符号長表を復元
-    int dist_len[29] = { 0 };
+    int dist_len[30] = { 0 };
     for ( int i = 0; i < hdist; ) {
         int code = readHuffman(len_huf, 19, st);
         int len = 0;
@@ -317,8 +321,8 @@ void inflate(
 
     //  距離の符号
     huffman dst_huf[285];
-    canonical(dist_len, 29, dst_huf);
-    showHuffman(dst_huf, 29);
+    canonical(dist_len, 30, dst_huf);
+    showHuffman(dst_huf, 30);
 
     //  データ本体を復元
     int len_base[286 - 256] = {
@@ -333,6 +337,10 @@ void inflate(
         1,       2,    3,    4,    5,    7,    9,    13,    17,    25,
         33,     49,   65,   97,  129,  193,  257,   385,   513,   769,
         1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577,
+    };
+    int dst_ext[30] = {
+        0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6,
+        6, 7, 7, 8, 8, 9, 9,10,10,11,11,12,12,13,13,
     };
 
     int pos = 0;
@@ -357,7 +365,22 @@ void inflate(
             wrt[pos++]  = code;
             continue;
         }
+        //  Extra.
+        int ld = readBits(st, len_ext[code - 256]);
+        int len = len_base[code - 256] + ld;
 
+        //  Dist.
+        int dcode = readHuffman(dst_huf, 30, st, &bits);
+        fprintf(stderr, "DIST = %x ", dcode);
+        showBits(dcode, bits);
+        fprintf(stderr, "\n");
+
+        int dd = readBits(st, dst_ext[code]);
+        int dst = dst_base[code] + dd;
+        for ( int j = 0; j < len; ++ j ) {
+            wrt.at(pos) = wrt.at(pos - dst);
+            ++ pos;
+        }
     }
 
     return;

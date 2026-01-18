@@ -152,6 +152,32 @@ convertHuffman(
 {
 }
 
+uint32_t
+readHuffman(
+        const  huffman huff[],
+        const  int  num,
+        status      &st)
+{
+    int bit = 0;
+    int max = -1;
+    int cod = 0;
+    while ( max == -1 || bit < max ) {
+        cod = (cod << 1) | readBits(st, 1);
+        ++ bit;
+        for ( int i = 0; i < num; ++ i ) {
+            int len = huff[i].len;
+            if ( len > max ) { max = len; }
+            if ( bit != len ) { continue; }
+            if ( huff[i].code == cod ) {
+                //  見つかった。
+                return ( cod );
+            }
+        }
+    }
+    fprintf(stderr, "Invalid Code at %lx\n", st.pos);
+    exit( 3 );
+}
+
 void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
 {
     status  st = { buf, fsz, 0, 0 };

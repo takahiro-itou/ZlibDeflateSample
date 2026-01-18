@@ -53,6 +53,21 @@ showArray(T (& ptr)[N]) {
     }
 }
 
+void
+showHuffman(const huffman huff[], const int N, FILE * fp = stderr)
+{
+    for ( int i = 0; i < N; ++ i ) {
+        if ( huff[i].len == 0 ) { continue; }
+        fprintf(fp, "Huff[%d] (%d) : ", i, huff[i].len);
+        for ( int j = 0; j < huff[i].len; ++ j ) {
+            int k = huff[i].len - j - 1;
+            fprintf(fp, "%d", (huff[i].code >> k) & 1);
+        }
+        fprintf(fp, "\n");
+    }
+}
+
+
 const uint32_t
 readBits(status & st, int bits)
 {
@@ -104,10 +119,10 @@ canonical(const int len[], const int num, huffman huff[])
                 min = copy[j];
             }
         }
+        work[i] = sel;
         if ( sel == -1 ) {
             break;
         }
-        work[i] = sel;
         copy[sel] = 0;
     }
 
@@ -124,6 +139,8 @@ canonical(const int len[], const int num, huffman huff[])
         }
         huff[sel] = h;
         ++ h.code;
+        fprintf(stderr, "# DBG : sel=%d, huff=%d, %x\n",
+                sel, h.len, h.code);
     }
 }
 
@@ -171,6 +188,10 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
         lenlen[len_pos[i]] = readBits(st, 3);
     }
     showArray(lenlen);
+
+    huffman len_huf[19];
+    canonical(lenlen, 19, len_huf);
+    showHuffman(len_huf, 19);
 
     return;
 }

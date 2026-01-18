@@ -350,35 +350,35 @@ void inflate(
     while ( pos < osz ) {
         //  ハフマン符号を読み出す。
         fprintf(stderr, "# DBG : pos = %08lx, %d : ", st.pos, st.bit);
-        int code = readHuffman(lit_huf, 285, st, &bits);
-        fprintf(stderr, "%x ", code);
-        showBits(code, bits);
+        int val = readHuffman(lit_huf, 285, st, &bits);
+        fprintf(stderr, "%x ", val);
+        showBits(val, bits);
         fprintf(stderr, "\n");
 
-        if ( code == 256 ) {
+        if ( val == 256 ) {
             break;      //  終端
         }
-        if ( code >= 286 ) {
-            fprintf(stderr, "Invalid Code : %d\n", code);
+        if ( val >= 286 ) {
+            fprintf(stderr, "Invalid Value : %d\n", val);
             exit( 4 );
         }
-        if ( code < 256 ) {
+        if ( val < 256 ) {
             //  そのまま
-            wrt[pos++]  = code;
+            wrt[pos++]  = val;
             continue;
         }
         //  Extra.
-        int ld = readBits(st, len_ext[code - 256]);
-        int len = len_base[code - 256] + ld;
+        int ld = readBits(st, len_ext[val - 256]);
+        int len = len_base[val - 256] + ld;
 
         //  Dist.
-        int dcode = readHuffman(dst_huf, 30, st, &bits);
-        fprintf(stderr, "DIST = %x ", dcode);
-        showBits(dcode, bits);
+        int dval = readHuffman(dst_huf, 30, st, &bits);
+        fprintf(stderr, "DIST = %x ", dval);
+        showBits(dval, bits);
         fprintf(stderr, "\n");
 
-        int dd = readBits(st, dst_ext[code]);
-        int dst = dst_base[code] + dd;
+        int dd = readBits(st, dst_ext[val]);
+        int dst = dst_base[val] + dd;
         for ( int j = 0; j < len; ++ j ) {
             wrt.at(pos) = wrt.at(pos - dst);
             ++ pos;

@@ -433,9 +433,9 @@ int main(int argc, char * argv[])
     inflate(ptr, fsz - 0x18, orgSize, wrt);
 
     if ( argc > 2 ) {
-        fp  = fopen("out.bin", "wb");
-    } else {
         fp  = fopen(argv[2], "wb");
+    } else {
+        fp  = fopen("out.bin", "wb");
     }
     if ( fp != nullptr ) {
         perror("output file open error");

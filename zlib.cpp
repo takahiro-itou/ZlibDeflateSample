@@ -177,6 +177,7 @@ readHuffman(
         const  huffman huff[],
         const  int  num,
         status      &st,
+        int *       pcode = nullptr,
         int *       pbits = nullptr)
 {
     int bit = 0;
@@ -189,14 +190,19 @@ readHuffman(
         dbg[bit] = '0' + n;
         cod = (cod << 1) | n;
         ++ bit;
+#if 0
         fprintf(stderr, "# READ HUFF %s, %d, %x\n",
                 dbg, bit, cod);
+#endif
         for ( int i = 0; i < num; ++ i ) {
             int len = huff[i].len;
             if ( len > max ) { max = len; }
             if ( bit != len ) { continue; }
             if ( huff[i].code == cod ) {
                 //  見つかった。
+                if ( pcode != nullptr ) {
+                    *pcode = cod;
+                }
                 if ( pbits != nullptr ) {
                     *pbits = bit;
                 }
@@ -346,13 +352,14 @@ void inflate(
     };
 
     int pos = 0;
+    int code = 0;
     int bits = 0;
     while ( pos < osz ) {
         //  ハフマン符号を読み出す。
         fprintf(stderr, "# DBG : pos = %08lx, %d : ", st.pos, st.bit);
-        int val = readHuffman(lit_huf, 285, st, &bits);
-        fprintf(stderr, "%x ", val);
-        showBits(val, bits);
+        int val = readHuffman(lit_huf, 285, st, &code, &bits);
+        fprintf(stderr, "%d (%02x) ", val, val);
+        showBits(code, bits);
         fprintf(stderr, "\n");
 
         if ( val == 256 ) {
@@ -372,13 +379,14 @@ void inflate(
         int len = len_base[val - 256] + ld;
 
         //  Dist.
-        int dval = readHuffman(dst_huf, 30, st, &bits);
-        fprintf(stderr, "DIST = %x ", dval);
-        showBits(dval, bits);
+        int dval = readHuffman(dst_huf, 30, st, &code, &bits);
+        fprintf(stderr, "# DIST CODE = %d ", dval);
+        showBits(code, bits);
         fprintf(stderr, "\n");
 
-        int dd = readBits(st, dst_ext[val]);
-        int dst = dst_base[val] + dd;
+        int dd = readBits(st, dst_ext[dval]);
+        int dst = dst_base[dval] + dd;
+        fprintf(stderr, "# COPY LEN = %d, DST = %d\n", len, dst);
         for ( int j = 0; j < len; ++ j ) {
             wrt.at(pos) = wrt.at(pos - dst);
             ++ pos;
@@ -422,6 +430,10 @@ int main(int argc, char * argv[])
 
     std::vector<uint8_t>    wrt;
     inflate(ptr, fsz - 0x18, orgSize, wrt);
+
+    fp  = fopen("out.bin", "wb");
+    fwrite(&(wrt[0]), 1, orgSize, fp);
+    fclose(fp);
 
     return ( 0 );
 }

@@ -258,6 +258,11 @@ void inflate(const uint8_t * buf, const size_t fsz, const size_t osz)
     }
     showArray(lit_len);
 
+    //  文字・一致長の符号
+    huffman lit_huf[285];
+    canonical(lit_len, 285, lit_huf);
+    showHuffman(lit_huf, 285);
+
     //  距離の符号長表を復元
     int dist_len[29] = { 0 };
     for ( int i = 0; i < hdist; ++ i ) {

@@ -299,6 +299,7 @@ void inflate(
     //  距離の符号長表を復元
     int dist_len[30] = { 0 };
     for ( int i = 0; i < hdist; ) {
+        status  st_bak = st;
         int code = readHuffman(len_huf, 19, st);
         int len = 0;
         if ( code == 16 ) {
@@ -324,6 +325,8 @@ void inflate(
             //  そのまま
             dist_len[i++] = code;
         }
+        fprintf(stderr, "# TBL DST : pos=%08lx.%d, code = %d, len = %d\n",
+                st_bak.pos, st_bak.bit, code, len);
     }
     fprintf(stderr, "dist_len = ");
     showArray(dist_len);

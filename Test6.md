@@ -553,9 +553,11 @@ BITS:   1011 1111   0110 1010   1001 1111   1111 0100   0000 1111   1100 1010   
 | 0083.7 | 0            |   0 |    0 |     0 |       - 17 | D:01     |
 | 0084.0 | 11111110100  |  E4 |      |       |            | E4       |
 | 0085.3 | 10101        |  01 |      |       |            | 01       |
+| 0086.0 | 11111011110  |  2F |      |       |            | 2F       |
+| 0087.3 | 10101        |  01 |      |       |            | 01       |
 
 ```
-00000010:   61 00 74 00 00 00 00 00     E4  01
+00000010:   61 00 74 00 00 00 00 00     E4  01 2F 01
 ```
 
 ```
@@ -576,19 +578,19 @@ BYTE:   8B          F2          FD          F2          CB          FE          
 BITS:
 
 ADDR:   00B0        00B1        00B2        00B3        00B4        00B5        00B6        00B7
-BYTE:
+BYTE:   35          AE          FC          7E          3C          F3          A7          FA
 BITS:
 
 ADDR:   00B8        00B9        00BA        00BB        00BC        00BD        00BE        00BF
-BYTE:
+BYTE:   71          DB          8F          77          DB          EF          EA          8F
 BITS:
 
 ADDR:   00C0        00C1        00C2        00C3        00C4        00C5        00C6        00C7
-BYTE:
+BYTE:   EB          97          E5          D5          FA          D7          F6          B8
 BITS:
 
 ADDR:   00C8        00C9        00CA        00CB        00CC        00CD        00CE        00CF
-BYTE:
+BYTE:   BF          5E          7E          DB          9E          8E          96          4F
 BITS:
 
 ADDR:   00D0        00D1        00D2        00D3        00D4        00D5        00D6        00D7
@@ -620,6 +622,14 @@ BYTE:
 BITS:
 
 ADDR:   0108        0109        010A        010B        010C        010D        010E        010F
+BYTE:
+BITS:
+
+ADDR:   0110        0111        0112        0113        0114        0115        0116        0117
+BYTE:
+BITS:
+
+ADDR:   0118        0119        011A        011B        011C        011D        011E        011F
 BYTE:
 BITS:
 

@@ -594,11 +594,11 @@ BYTE:   BF          5E          7E          DB          9E          8E          
 BITS:
 
 ADDR:   00D0        00D1        00D2        00D3        00D4        00D5        00D6        00D7
-BYTE:
+BYTE:   DA          67          ED          B3          FA          B4          3D          28
 BITS:
 
 ADDR:   00D8        00D9        00DA        00DB        00DC        00DD        00DE        00DF
-BYTE:
+BYTE:   AF          F5          D7          FA          1B          ED          17          E5
 BITS:
 
 ADDR:   00E0        00E1        00E2        00E3        00E4        00E5        00E6        00E7
@@ -630,6 +630,14 @@ BYTE:
 BITS:
 
 ADDR:   0118        0119        011A        011B        011C        011D        011E        011F
+BYTE:
+BITS:
+
+ADDR:   0120        0121        0122        0123        0124        0125        0126        0127
+BYTE:
+BITS:
+
+ADDR:   0128        0129        012A        012B        012C        012D        012E        012F
 BYTE:
 BITS:
 

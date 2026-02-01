@@ -1015,6 +1015,38 @@ ADDR:   01B8        01B9        01BA        01BB        01BC        01BD        
 BYTE:
 BITS:
 
+ADDR:   01C0        01C1        01C2        01C3        01C4        01C5        01C6        01C7
+BYTE:
+BITS:
+
+ADDR:   01C8        01C9        01CA        01CB        01CC        01CD        01CE        01CF
+BYTE:
+BITS:
+
+ADDR:   01D0        01D1        01D2        01D3        01D4        01D5        01D6        01D7
+BYTE:
+BITS:
+
+ADDR:   01D8        01D9        01DA        01DB        01DC        01DD        01DE        01DF
+BYTE:
+BITS:
+
+ADDR:   01E0        01E1        01E2        01E3        01E4        01E5        01E6        01E7
+BYTE:
+BITS:
+
+ADDR:   01E8        01E9        01EA        01EB        01EC        01ED        01EE        01EF
+BYTE:
+BITS:
+
+ADDR:   01F0        01F1        01F2        01F3        01F4        01F5        01F6        01F7
+BYTE:
+BITS:
+
+ADDR:   01F8        01F9        01FA        01FB        01FC        01FD        01FE        01FF
+BYTE:
+BITS:
+
 ADDR:
 BYTE:
 BITS:

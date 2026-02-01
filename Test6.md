@@ -1078,6 +1078,70 @@ ADDR:   01F8        01F9        01FA        01FB        01FC        01FD        
 BYTE:
 BITS:
 
+ADDR:   0200        0201        0202        0203        0204        0205        0206        0207
+BYTE:
+BITS:
+
+ADDR:   0208        0209        020A        020B        020C        020D        020E        020F
+BYTE:
+BITS:
+
+ADDR:   0210        0211        0212        0213        0214        0215        0216        0217
+BYTE:
+BITS:
+
+ADDR:   0218        0219        021A        021B        021C        021D        021E        021F
+BYTE:
+BITS:
+
+ADDR:   0220        0221        0222        0223        0224        0225        0226        0227
+BYTE:
+BITS:
+
+ADDR:   0228        0229        022A        022B        022C        022D        022E        022F
+BYTE:
+BITS:
+
+ADDR:   0230        0231        0232        0233        0234        0235        0236        0237
+BYTE:
+BITS:
+
+ADDR:   0238        0239        023A        023B        023C        023D        023E        023F
+BYTE:
+BITS:
+
+ADDR:   0240        0241        0242        0243        0244        0245        0246        0247
+BYTE:
+BITS:
+
+ADDR:   0248        0249        024A        024B        024C        024D        024E        024F
+BYTE:
+BITS:
+
+ADDR:   0250        0251        0252        0253        0254        0255        0256        0257
+BYTE:
+BITS:
+
+ADDR:   0258        0259        025A        025B        025C        025D        025E        025F
+BYTE:
+BITS:
+
+ADDR:   0260        0261        0262        0263        0264        0265        0266        0267
+BYTE:
+BITS:
+
+ADDR:   0268        0269        026A        026B        026C        026D        026E        026F
+BYTE:
+BITS:
+
+ADDR:   0270        0271        0272        0273        0274        0275        0276        0277
+BYTE:
+BITS:
+
+ADDR:   0278        0279        027A        027B        027C        027D        027E        027F
+BYTE:
+BITS:
+
 ADDR:
 BYTE:
 BITS:

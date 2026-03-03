@@ -1371,8 +1371,12 @@ BYTE:   D1          6F          CF          3C          F7          9C          
 BITS:   1101 0001   0110 1111   1100 1111   0011 1100   1111 0111   1001 1100   1011 1011   1001 1011
 
 ADDR:   02A0        02A1        02A2        02A3        02A4        02A5        02A6        02A7
+BYTE:   CC          F0          AC          F0          ED          FA          CE          4B
+BITS:
 
 ADDR:   02A8        02A9        02AA        02AB        02AC        02AD        02AE        02AF
+BYTE:   64          E0          F9          9A          9D          EF          DB          B2
+BITS:
 
 ADDR:   02B0        02B1        02B2        02B3        02B4        02B5        02B6        02B7
 
